@@ -3,7 +3,7 @@
 
 # ## Diabets predicion and Step by Step Classification-KNN-detailed
 
-# In[2]:
+
 
 
 from mlxtend.plotting import plot_decision_regions
@@ -16,43 +16,15 @@ import warnings
 warnings.filterwarnings('ignore')
 get_ipython().run_line_magic('matplotlib', 'inline')
 
-
-# In[ ]:
-
-
-
-
-
-# In[5]:
-
-
 diabetes_data = pd.read_csv("C:/Users/khana/Downloads/pima-indians-diabetes-database/diabetes.csv")
 data.shape
 
 
 # Basic EDA and statistical analysis
-# 
-
-# In[6]:
-
 
 diabetes_data.head()
-
-
-# In[7]:
-
-
 diabetes_data.info(verbose=True)
-
-
-# In[8]:
-
-
 diabetes_data.describe()
-
-
-# In[9]:
-
 
 diabetes_data.describe().T
 
@@ -70,9 +42,6 @@ diabetes_data.describe().T
 
 # # It is better to replace zeros with nan since after that counting them would be easier and zeros need to be replaced with suitable values
 
-# In[10]:
-
-
 diabetes_data_copy = diabetes_data.copy(deep = True)
 diabetes_data_copy[['Glucose','BloodPressure','SkinThickness','Insulin','BMI']] = diabetes_data_copy[['Glucose','BloodPressure','SkinThickness','Insulin','BMI']].replace(0,np.NaN)
 
@@ -80,20 +49,9 @@ diabetes_data_copy[['Glucose','BloodPressure','SkinThickness','Insulin','BMI']] 
 print(diabetes_data_copy.isnull().sum())
 
 
-# In[11]:
-
-
 p = diabetes_data.hist(figsize = (20,20))
 
-
-# In[ ]:
-
-
 #Aiming to impute nan values for the columns in accordance with their distribution
-
-
-# In[12]:
-
 
 diabetes_data_copy['Glucose'].fillna(diabetes_data_copy['Glucose'].mean(), inplace = True)
 diabetes_data_copy['BloodPressure'].fillna(diabetes_data_copy['BloodPressure'].mean(), inplace = True)
@@ -101,36 +59,17 @@ diabetes_data_copy['SkinThickness'].fillna(diabetes_data_copy['SkinThickness'].m
 diabetes_data_copy['Insulin'].fillna(diabetes_data_copy['Insulin'].median(), inplace = True)
 diabetes_data_copy['BMI'].fillna(diabetes_data_copy['BMI'].median(), inplace = True)
 
-
-# In[ ]:
-
-
 ##Plotting after Nan remova
-
-
-# In[13]:
 
 
 p = diabetes_data_copy.hist(figsize = (20,20))
 
-
-# In[14]:
-
-
 ## observing the shape of the data
 diabetes_data.shape
-
-
-# In[18]:
-
 
 ## null count analysis
 import missingno as msno
 p=msno.bar(diabetes_data)
-
-
-# In[19]:
-
 
 ## checking the balance of the data by plotting the count of outcomes by their value
 color_wheel = {1: "#0392cf", 
@@ -144,55 +83,25 @@ p=diabetes_data.Outcome.value_counts().plot(kind="bar")
 
 # ##Scatter matrix of uncleaned data
 
-# In[21]:
-
-
 import pandas.plotting
 from pandas.plotting import scatter_matrix
 p=scatter_matrix(diabetes_data,figsize=(25, 25))
 
 
-# In[43]:
-
-
 ##Pair plot for clean data
-
-
-# In[22]:
-
 
 p=sns.pairplot(diabetes_data_copy, hue = 'Outcome')
 
-
-# In[ ]:
-
-
 ##Heatmap for unclean data
-
-
-# In[23]:
-
 
 plt.figure(figsize=(12,10))  # on this line I just set the size of figure to 12 by 10.
 p=sns.heatmap(diabetes_data.corr(), annot=True,cmap ='RdYlGn')  # seaborn has very simple solution for heatmap
-
-
-# In[24]:
-
 
 #Heatmap for clean data
 plt.figure(figsize=(12,10))  # on this line I just set the size of figure to 12 by 10.
 p=sns.heatmap(diabetes_data_copy.corr(), annot=True,cmap ='RdYlGn')  # seaborn has very simple solution for heatmap
 
-
-# In[44]:
-
-
 ##Scaling the data
-
-
-# In[25]:
-
 
 from sklearn.preprocessing import StandardScaler
 sc_X = StandardScaler()
@@ -201,27 +110,22 @@ X =  pd.DataFrame(sc_X.fit_transform(diabetes_data_copy.drop(["Outcome"],axis = 
        'BMI', 'DiabetesPedigreeFunction', 'Age'])
 
 
-# In[26]:
+
 
 
 X.head()
 
-
-# In[27]:
 
 
 #X = diabetes_data.drop("Outcome",axis = 1)
 y = diabetes_data_copy.Outcome
 
 
-# In[ ]:
-
-
 #Test Train Split and Cross Validation methods
 ##Train Test Split : To have unknown datapoints to test the data rather than testing with the same points with which the model was trained. This helps capture the model performance much better.
 
 
-# In[28]:
+
 
 
 #importing train_test_split
@@ -229,7 +133,7 @@ from sklearn.model_selection import train_test_split
 X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=1/3,random_state=42, stratify=y)
 
 
-# In[29]:
+
 
 
 from sklearn.neighbors import KNeighborsClassifier
@@ -247,7 +151,6 @@ for i in range(1,15):
     test_scores.append(knn.score(X_test,y_test))
 
 
-# In[30]:
 
 
 ## score that comes from testing on the same datapoints that were used for training
@@ -256,7 +159,7 @@ train_scores_ind = [i for i, v in enumerate(train_scores) if v == max_train_scor
 print('Max train score {} % and k = {}'.format(max_train_score*100,list(map(lambda x: x+1, train_scores_ind))))
 
 
-# In[31]:
+
 
 
 ## score that comes from testing on the datapoints that were split in the beginning to be used for testing solely
@@ -265,7 +168,7 @@ test_scores_ind = [i for i, v in enumerate(test_scores) if v == max_test_score]
 print('Max test score {} % and k = {}'.format(max_test_score*100,list(map(lambda x: x+1, test_scores_ind))))
 
 
-# In[32]:
+
 
 
 plt.figure(figsize=(12,5))
@@ -273,7 +176,7 @@ p = sns.lineplot(range(1,15),train_scores,marker='*',label='Train Score')
 p = sns.lineplot(range(1,15),test_scores,marker='o',label='Test Score')
 
 
-# In[33]:
+
 
 
 #Setup a knn classifier with k neighbors
@@ -283,7 +186,7 @@ knn.fit(X_train,y_train)
 knn.score(X_test,y_test)
 
 
-# In[36]:
+
 
 
 from mlxtend.plotting import plot_decision_regions
@@ -304,7 +207,7 @@ plt.title('KNN with Diabetes Data')
 plt.show()
 
 
-# In[37]:
+
 
 
 #import confusion_matrix
@@ -315,7 +218,7 @@ confusion_matrix(y_test,y_pred)
 pd.crosstab(y_test, y_pred, rownames=['True'], colnames=['Predicted'], margins=True)
 
 
-# In[38]:
+
 
 
 y_pred = knn.predict(X_test)
@@ -327,7 +230,6 @@ plt.ylabel('Actual label')
 plt.xlabel('Predicted label')
 
 
-# In[39]:
 
 
 #import classification_report
@@ -335,7 +237,7 @@ from sklearn.metrics import classification_report
 print(classification_report(y_test,y_pred))
 
 
-# In[40]:
+
 
 
 from sklearn.metrics import roc_curve
@@ -349,7 +251,7 @@ plt.title('Knn(n_neighbors=11) ROC curve')
 plt.show()
 
 
-# In[41]:
+
 
 
 #Area under ROC curve
@@ -357,7 +259,6 @@ from sklearn.metrics import roc_auc_score
 roc_auc_score(y_test,y_pred_proba)
 
 
-# In[42]:
 
 
 #import GridSearchCV
@@ -372,7 +273,7 @@ print("Best Score:" + str(knn_cv.best_score_))
 print("Best Parameters: " + str(knn_cv.best_params_))
 
 
-# In[ ]:
+
 
 
 
